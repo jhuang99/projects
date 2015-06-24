@@ -14,6 +14,7 @@ class Battle:
 		self.current_pokemon = []
 		self.all_turns = []
 		self.winner = None
+		self.all_pokemon = []
 
 
 	def add_players(self, player1, player2):
@@ -33,7 +34,9 @@ class Turn:
 	def __init__(self, number, current_pokemon):
 		self.number = number
 		self.actions = {}
-		self.current_pokemon = []
+		self.current_pokemon = [] #the pokemon that are out at the end of the turn
+		self.all_pokemon = [] #all pokemon present in this round
+		self.fainted_pokemon = [] #all the pokemon who fainted in this turn
 
 	def pokemonStatus(self, battle):
 		"""displays the status of each player's pokemon at the end of each turn"""
@@ -46,7 +49,8 @@ class Player:
 	def __init__(self, name, number):
 		self.name = name
 		self.number = number
-		self.team = []
+		self.start_team = []
+		self.current_team = []
 		self.win = False
 		self.actions = {}
 
