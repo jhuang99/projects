@@ -12,9 +12,10 @@ class Battle:
 		self.rated = False
 		self.doubles = False
 		self.current_pokemon = []
-		self.all_turns = []
+		self.string_turns = []
 		self.winner = None
 		self.all_pokemon = []
+		self.all_turns = []
 
 
 	def add_players(self, player1, player2):
@@ -34,7 +35,7 @@ class Turn:
 	def __init__(self, number, current_pokemon):
 		self.number = number
 		self.actions = {}
-		self.current_pokemon = [] #the pokemon that are out at the end of the turn
+		self.current_pokemon = [] #the pokemon that are out at the end of this turn
 		self.all_pokemon = [] #all pokemon present in this round
 		self.fainted_pokemon = [] #all the pokemon who fainted in this turn
 
