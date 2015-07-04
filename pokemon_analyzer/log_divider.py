@@ -43,7 +43,7 @@ def analyze_start(start, battle):
 	player1Team = False
 	player2Team = False
 	for line in start:
-		# print(line)
+
 		line = line.rstrip('\n')
 
 		matchPlayer = re.match( r'(.*) joined.', line)

@@ -6,7 +6,6 @@ class Battle:
 	def __init__(self):
 		self.battleType = None
 		self.turn_number = 0
-		self.game_over = False
 		self.player1 = None
 		self.player2 = None
 		self.conditions = []
@@ -15,6 +14,7 @@ class Battle:
 		self.string_turns = []
 		self.winner = None
 		self.all_turns = []
+		self.end_result = None
 
 
 	def add_players(self, player1, player2):
@@ -25,6 +25,8 @@ class Battle:
 		self.battleType = battleType
 		if "Doubles" in battleType:
 			self.doubles = True
+	def get_turn(self, number):
+		return self.all_turns[number]
 
 
 
@@ -34,8 +36,6 @@ class Turn:
 	def __init__(self, number):
 		self.number = number
 		self.actions = {}
-		self.all_pokemon = [] #all pokemon present in this round
-		self.fainted_pokemon = [] #all the pokemon who fainted in this turn
 		self.p1_pokemon = []
 		self.p2_pokemon = []
 
@@ -45,6 +45,17 @@ class Turn:
 		"""displays the status of each player's pokemon at the end of each turn"""
 		print(battle.player1 + "'s pokemon alive:" + player1.team)
 
+	def get_pokemon(self, player, name):
+		if player == 1:
+			for pokemon in self.p1_pokemon:
+				if pokemon.name == name:
+					return pokemon
+			print("Pokemon not found")
+		else:
+			for pokemon in self.p2_pokemon:
+				if pokemon.name == name:
+					return pokemon
+			print("Pokemon not found")
 
 
 class Player:
@@ -87,47 +98,10 @@ class Pokemon:
 		return poke_copy
 
 	def faint(self, turn):
-		self.faint = True
+		self.fainted = True
 		self.turn_fainted = turn.number
 		self.health = 0
 		self.in_play = False
-
-
-
-# class Node:
-# 	"""A single node for a linked list"""
-# 	def __init__(self, value=None, prev=None, next=None):
-# 		self.value = value
-# 		self.prev = prev
-# 		self.next = next
-# 	def get_value(self):
-# 		return self.value
-# 	def get_prev(self):
-# 		return self.prev
-# 	def get_next(self):
-# 		return self.next
-# 	def set_next(self, new_next):
-#     	self.next = new_next
-#     def set_prev(self, new_prev):
-#     	self.prev = new_prev
-
-# class LinkedList(object):
-
-# 	def __init__(self, head=None):
-# 		self.head = head
-# 		if not head:
-# 			self.size = 0
-# 		else:
-# 			self.size = 1
-
-# 	def insert(self, value):
-# 		new_node = Node(value)
-# 		new_node.set_prev(self.head)
-# 		self.set_next(new_node)
-# 		self.head = new_node
-# 		self.size += 1
-
-
 
 
 
