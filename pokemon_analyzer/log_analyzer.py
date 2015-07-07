@@ -29,7 +29,6 @@ def read_body(filename):
 		else:
 			end.append(line)
 	analyze_start(start, battle)
-	# print(middle)
 	string_turns = split_turns(middle)
 	for turn in string_turns:
 		analyze_turn(turn, string_turns[turn], battle)
@@ -115,71 +114,73 @@ def analyze_turn(number, turn, battle):
 			this_turn.p1_pokemon.append(pokemon.copy(this_turn))
 		for pokemon in battle.player2.team:
 			this_turn.p2_pokemon.append(pokemon.copy(this_turn))
-	match_p1_send_out = re.finditer( r'Go! (.*)!', turn) #This is turn0
-	match_p2_send_out = re.finditer( r'(.*) sent out (.*)!', turn)
-	match_mega = re.finditer( r'(.*) has Mega Evolved into Mega (.*)!', turn)
-	match_attack = re.finditer( r'((.*) used (.*)!)(\n(.*)!)*', turn) #matches the attack and all the consequences
-	match_pokemon_fainted = re.finditer(r'(.*) fainted', turn)
-	match_p1_withdraw = re.finditer(r'(.*), come back!', turn)
-	match_p2_withdraw = re.finditer( r'(.*) withdrew (.*)!', turn)
-	for match in match_p1_send_out:
-		for pokemon in this_turn.p1_pokemon:
-			if pokemon.name == match.group(1):
-				pokemon.in_play = True
-				break
-	for match in match_p2_send_out:
-		for pokemon in this_turn.p2_pokemon:
-			if pokemon.name == match.group(2):
-				pokemon.in_play = True
-				break
-	for match in match_mega:
-		match_mega_pokemon = match.group(2)
-		for pokemon in this_turn.p1_pokemon + this_turn.p2_pokemon:
-			if pokemon.name == match_mega_pokemon:
-				pokemon.mega_evolved = True
-				break
-	for match in match_attack:
-		entire_attack = match.group(1)
-		pokemon_name = match.group(2)
-		attack = match.group(3)
-		consequences = match.group(4).strip()
-		this_turn.actions[entire_attack] = consequences
-		if "opposing" in pokemon_name:
-			for pokemon in this_turn.p2_pokemon:
-				if "The opposing " + pokemon.name == pokemon_name:
-					pokemon.actions[attack] = consequences
-					battle.player2.actions[entire_attack] = consequences
-					break
-		else:
+	divided_turn = re.split("\n\n", turn)
+	for line in divided_turn: 
+		match_p1_send_out = re.finditer( r'Go! (.*)!', line) #This is turn0
+		match_p2_send_out = re.finditer( r'(.*) sent out (.*)!', line)
+		match_mega = re.finditer( r'(.*) has Mega Evolved into Mega (.*)!', line)
+		match_attack = re.finditer( r'((.*) used (.*)!)(\n(.*)!)*', line) #matches the attack and all the consequences
+		match_pokemon_fainted = re.finditer(r'(.*) fainted', line)
+		match_p1_withdraw = re.finditer(r'(.*), come back!', line)
+		match_p2_withdraw = re.finditer( r'(.*) withdrew (.*)!', line)
+		for match in match_p1_send_out:
 			for pokemon in this_turn.p1_pokemon:
+				if pokemon.name == match.group(1):
+					pokemon.in_play = True
+					break
+		for match in match_p2_send_out:
+			for pokemon in this_turn.p2_pokemon:
+				if pokemon.name == match.group(2):
+					pokemon.in_play = True
+					break
+		for match in match_mega:
+			match_mega_pokemon = match.group(2)
+			for pokemon in this_turn.p1_pokemon + this_turn.p2_pokemon:
+				if pokemon.name == match_mega_pokemon:
+					pokemon.mega_evolved = True
+					break
+		for match in match_attack:
+			entire_attack = match.group(1)
+			pokemon_name = match.group(2)
+			attack = match.group(3)
+			consequences = match.group(4).strip()
+			this_turn.actions[entire_attack] = consequences
+			if "opposing" in pokemon_name:
+				for pokemon in this_turn.p2_pokemon:
+					if "The opposing " + pokemon.name == pokemon_name:
+						pokemon.actions[attack] = consequences
+						battle.player2.actions[entire_attack] = consequences
+						break
+			else:
+				for pokemon in this_turn.p1_pokemon:
+					if pokemon.name == pokemon_name:
+						pokemon.actions[attack] = consequences
+						battle.player1.actions[entire_attack] = consequences
+						break
+		for match in match_pokemon_fainted:
+			fainted_pokemon = match.group(1)
+			if "opposing" in fainted_pokemon:
+				for pokemon in this_turn.p2_pokemon:
+					if "The opposing" + pokemon.name == fainted_pokemon:
+						pokemon.faint(this_turn)
+						break
+			else:
+				for pokemon in this_turn.p1_pokemon:
+					if pokemon.name == fainted_pokemon:
+						pokemon.faint(this_turn)
+						break
+		for match in match_p1_withdraw: 
+			# r'(.*), come back!\n\sGo! (.*)!
+			pokemon_prev = match.group(1)
+			for pokemon in this_turn.p1_pokemon:
+				if pokemon.name == pokemon_prev:
+					pokemon.in_play = False
+		for match in match_p2_withdraw:
+			# r'(.*) withdrew (.*)!\n\s(.*) sent out (.*)!'
+			pokemon_name = match.group(2)
+			for pokemon in this_turn.p2_pokemon:
 				if pokemon.name == pokemon_name:
-					pokemon.actions[attack] = consequences
-					battle.player1.actions[entire_attack] = consequences
-					break
-	for match in match_pokemon_fainted:
-		fainted_pokemon = match.group(1)
-		if "opposing" in fainted_pokemon:
-			for pokemon in this_turn.p2_pokemon:
-				if "The opposing" + pokemon.name == fainted_pokemon:
-					pokemon.faint(this_turn)
-					break
-		else:
-			for pokemon in this_turn.p1_pokemon:
-				if pokemon.name == fainted_pokemon:
-					pokemon.faint(this_turn)
-					break
-	for match in match_p1_withdraw:
-		# battle.player1.actions[match.group(0)] = None
-		pokemon_name = match.group(1)
-		for pokemon in this_turn.p1_pokemon:
-			if pokemon.name == pokemon_name:
-				pokemon.in_play = False
-	for match in match_p2_withdraw:
-		# battle.player1.actions[match.group(0)] = None
-		pokemon_name = match.group(2)
-		for pokemon in this_turn.p2_pokemon:
-			if pokemon.name == pokemon_name:
-				pokemon.in_play = False
+					pokemon.in_play = False
 
 
 def analyze_end(end, battle):
@@ -211,14 +212,16 @@ class Test(unittest.TestCase):
 	def test_both_players(self):
 		self.assertEqual(self.battle.player1.name, "redfor")
 		self.assertEqual(self.battle.player2.name, "BOON305")
-	def test_pokemon_team(self):
 
+	def test_pokemon_team(self):
 		self.assertEqual((len(self.battle.player1.team)), 6)
 		self.assertEqual(self.battle.player2.team[1].name, "Charizard")
 		self.assertEqual(self.battle.player2.team[5].name, "Clefairy")
 		self.assertEqual(self.battle.player1.team[5].name, "Gourgeist-*")
+
 	def test_clauses(self):
 		self.assertTrue(self.battle.conditions)
+
 	def test_mega(self):
 		self.assertTrue(self.battle.get_turn(1).get_pokemon(1, "Kangaskhan").mega_evolved) #make sure Kanghaskan mega_evolved
 		self.assertTrue(self.battle.get_turn(2).get_pokemon(1, "Kangaskhan").mega_evolved)
@@ -242,10 +245,16 @@ class Test(unittest.TestCase):
 		self.assertTrue(self.battle.get_turn(2).get_pokemon(2,"Clefairy").in_play)
 		self.assertFalse(self.battle.get_turn(3).get_pokemon(2,"Meowstic").in_play)
 		self.assertTrue(self.battle.get_turn(3).get_pokemon(2,"Clefairy").in_play)
+		self.assertTrue(self.battle.get_turn(0).get_pokemon(1, "Kangaskhan").in_play)
 
 	def test_winner(self):
 		self.assertEqual(self.battle.winner.name, "BOON305")
 		self.assertEqual(self.battle.end_result, "inactivity")
+
+	def test_pokemon_copies(self):
+		self.assertEqual(self.battle.get_turn(2).get_pokemon(2, "Meowstic"), self.battle.get_turn(3).get_pokemon(2, "Meowstic").prev_copy)
+		self.assertEqual(self.battle.player2.team[1].prev_copy, None)
+
 # read_body('Example_Battle_Format.txt')
 
 	# def testError(self):

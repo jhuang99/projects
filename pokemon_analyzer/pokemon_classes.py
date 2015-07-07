@@ -1,4 +1,6 @@
 import copy
+import re
+
 class Battle:
 	"""The overall condition of the entire Battle
 	Contains all the information about the general """
@@ -58,6 +60,45 @@ class Turn:
 			print("Pokemon not found")
 
 
+class Action:
+	"""The Action that occurs in a turn"""
+	def __init__(self, turn, player, action, *args):
+		#attack--args = (pokemon, attack, consequences)
+		#switch--args = (withdraw_poke, send_poke)
+		this.turn = turn
+		self.player = player
+		self.order = 0
+		self.consequences = None
+		self.type = action
+		if action == "attack":
+			self.attack(*args)
+
+		elif action == "switch":
+			self.withdraw_poke = args[0]
+			self.send_poke = args[1]
+
+	def attack(pokemon, pokemon_directed_at, attack, consequence):
+		damage_match = re.finditer('(.*) lost (.*)% of its health', consequence)
+		for match in damage_match:
+			pokemon_affected = match.group(1) 
+			damage = match.group(2)
+			for pokemon in self.turn.p1_pokemon + self.turn.p2_pokemon:
+				if pokemon_affected == pokemon.name:
+					pokemon.take_damage(damage)
+					#need to figureout how to subtract damage, tuples?
+
+
+
+		process_consequences(consequence)
+
+
+	def process_consequence(consequence):
+		pass
+		#deal with damage
+	def update_order():
+		self.order += 1
+
+
 class Player:
 	"""The Player"""
 	def __init__(self, name, number):
@@ -103,6 +144,8 @@ class Pokemon:
 		self.health = 0
 		self.in_play = False
 
+	def take_damage(self, damage):
+		self.health -= damage
 
 
 #Organize each Text into different Blocks 
