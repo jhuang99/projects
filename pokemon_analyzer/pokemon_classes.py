@@ -37,66 +37,102 @@ class Turn:
 	"""Each Turn"""
 	def __init__(self, number):
 		self.number = number
-		self.actions = {}
+		self.actions = []
 		self.p1_pokemon = []
 		self.p2_pokemon = []
 
 
-
+	def add_action(self, action):
+		self.actions.append(action)
 	def pokemonStatus(self, battle):
 		"""displays the status of each player's pokemon at the end of each turn"""
 		print(battle.player1 + "'s pokemon alive:" + player1.team)
 
-	def get_pokemon(self, player, name):
+	# def get_pokemon(self, player, name):
+	# 	if player == 1:
+	# 		for pokemon in self.p1_pokemon:
+	# 			if pokemon.name == name:
+	# 				return pokemon
+	# 		print("Pokemon not found")
+	# 	else:
+	# 		for pokemon in self.p2_pokemon:
+	# 			if pokemon.name == name:
+	# 				return pokemon
+	# 		print("Pokemon not found")
+
+	def get_pokemon(self, name, player = None):
 		if player == 1:
 			for pokemon in self.p1_pokemon:
 				if pokemon.name == name:
 					return pokemon
-			print("Pokemon not found")
-		else:
+			print("pokemon not found")
+		elif player == 2:
 			for pokemon in self.p2_pokemon:
 				if pokemon.name == name:
 					return pokemon
-			print("Pokemon not found")
+			print("pokemon not found")
+		else:
+			for pokemon in self.p1_pokemon + self.p2_pokemon:
+
+				if pokemon.name == name:
+					# print(pokemon.name)
+					return pokemon
+			print("pokemon not found")
 
 
 class Action:
 	"""The Action that occurs in a turn"""
+	order = 0
 	def __init__(self, turn, player, action, *args):
-		#attack--args = (pokemon, attack, consequences)
-		#switch--args = (withdraw_poke, send_poke)
-		this.turn = turn
+		Action.update_order()
+		self.turn = turn
 		self.player = player
-		self.order = 0
-		self.consequences = None
 		self.type = action
-		if action == "attack":
-			self.attack(*args)
-
-		elif action == "switch":
-			self.withdraw_poke = args[0]
-			self.send_poke = args[1]
-
-	def attack(pokemon, pokemon_directed_at, attack, consequence):
-		damage_match = re.finditer('(.*) lost (.*)% of its health', consequence)
-		for match in damage_match:
-			pokemon_affected = match.group(1) 
-			damage = match.group(2)
-			for pokemon in self.turn.p1_pokemon + self.turn.p2_pokemon:
-				if pokemon_affected == pokemon.name:
-					pokemon.take_damage(damage)
-					#need to figureout how to subtract damage, tuples?
-
-
-
-		process_consequences(consequence)
-
-
+		
 	def process_consequence(consequence):
 		pass
 		#deal with damage
 	def update_order():
-		self.order += 1
+		Action.order += 1
+	def reset():
+		Action.order = 0
+
+class Attack(Action):
+
+	def __init__(self, turn, player, pokemon, attack, consequence):
+		Action.__init__(self, turn, player, "attack")
+		self.pokemon = pokemon
+		self.attack = attack
+		self.consequence = consequence
+
+	def analyze_consequence(self):
+		damage_match = re.finditer('(The opposing )?(.*) lost (.*)% of its health', self.consequence)
+		for match in damage_match:
+			pokemon_effected = match.group(2) 
+			pokemon = self.turn.get_pokemon(pokemon_effected)
+			damage = match.group(3)
+			if '–' in damage:
+				range_damage = damage.split("–")
+				range_damage = [int(float(number)) for number in range_damage]
+				if pokemon.health == 100:
+					pokemon.health = [100, 100]
+				pokemon_health = [health - damage for health, damage in zip(pokemon.health, range_damage)]
+			else:
+				damage = int(float(damage))
+				pokemon.health -= damage
+
+			# for pokemon in self.turn.p1_pokemon + self.turn.p2_pokemon:
+			# 	if pokemon_effected == pokemon.name:
+			# 		pokemon.take_damage(damage)
+
+class Switch(Action):
+	def __init__(self, turn, player, withdraw_poke, send_poke):
+		Action.__init__(self, turn, player, "switch")
+		self.withdraw_poke = withdraw_poke
+		self.send_poke = send_poke
+		withdraw_poke.in_play = False
+		send_poke.in_play = True
+
 
 
 class Player:
@@ -117,10 +153,13 @@ class Player:
 	
 class Pokemon:
 	"""Each pokemon"""
-	def __init__(self, species, trainer):
+	def __init__(self, pokemon, trainer):
 		self.turn = 0
-		self.type = species
+		self.type = pokemon
 		self.name = self.type
+		if "*" in pokemon:
+			self.name = "Gourgeist-Super"
+		#cheat mode to get around game
 		self.trainer = trainer
 		self.item = None
 		self.fainted = False
