@@ -107,70 +107,59 @@ def analyze_turn(number, turn, battle):
 	battle.all_turns.append(this_turn)
 	battle.turn_number = number
 	if number != 0:
-		for pokemon in battle.all_turns[number - 1].p1_pokemon:
+		for pokemon in battle.all_turns[number - 1].p1_pokemon: 
 			this_turn.p1_pokemon.append(pokemon.copy(this_turn)) #should deep copy pokemon from previous turn
 		for pokemon in battle.all_turns[number - 1].p2_pokemon:
 			this_turn.p2_pokemon.append(pokemon.copy(this_turn))
-	else: #for turn 0
+	else: #for turn 0, copies pokemon from starting team
 		for pokemon in battle.player1.team:
 			this_turn.p1_pokemon.append(pokemon.copy(this_turn))
 		for pokemon in battle.player2.team:
 			this_turn.p2_pokemon.append(pokemon.copy(this_turn))
-	divided_turn = re.split("\n\n", turn)
+	divided_turn = re.split("\n\n", turn) #splits each turn into each action
 	for line in divided_turn: 
-		match_p1_send_out = re.finditer( r'Go! (.*)!', line) #This is turn0
+		match_p1_send_out = re.finditer( r'Go! (.*)!', line) #sending out pokemon player 1
 		match_p2_send_out = re.finditer( r'(.*) sent out (.*)!', line)
 		match_mega = re.finditer( r'(.*) has Mega Evolved into Mega (.*)!', line)
-		match_attack = re.finditer( r'((.*) used (.*)!)(\n(.*)!)*', line) #matches the attack and all the consequences
+		match_attack = re.finditer( r'((.*) used (.*)!)((\n(.*)!)+)', line) #matches the attack and all the consequences
 		match_pokemon_fainted = re.finditer(r'(.*) fainted', line)
 		match_p1_withdraw = re.finditer(r'(.*), come back!', line)
 		match_p2_withdraw = re.finditer( r'(.*) withdrew (.*)!', line)
 		for match in match_mega:
 			match_mega_pokemon = match.group(2)
-			for pokemon in this_turn.p1_pokemon + this_turn.p2_pokemon:
-				if pokemon.name == match_mega_pokemon:
-					pokemon.mega_evolved = True
-					break
+			match_pokemon = this_turn.get_pokemon(match_mega_pokemon)
+			match_pokemon.mega_evolved = True
 
 		for match in match_pokemon_fainted:
 			fainted_pokemon = match.group(1)
-			if "opposing" in fainted_pokemon:
-				for pokemon in this_turn.p2_pokemon:
-					if "The opposing" + pokemon.name == fainted_pokemon:
-						pokemon.faint(this_turn)
-						break
+			if fainted_pokemon.startswith("The opposing "):
+				fainted_pokemon = fainted_pokemon.split("opposing ")[1]
+				match_pokemon = this_turn.get_pokemon(fainted_pokemon, 2)
+				match_pokemon.faint(this_turn)
 			else:
-				for pokemon in this_turn.p1_pokemon:
-					if pokemon.name == fainted_pokemon:
-						pokemon.faint(this_turn)
-						break
+				match_pokemon = this_turn.get_pokemon(fainted_pokemon, 1)
+				match_pokemon.faint(this_turn)
 
-		
 		for match in match_p1_withdraw: 
-			# create a new Action, mark to take in next line as a send out
 			pokemon_prev = match.group(1)
 			for pokemon in this_turn.p1_pokemon:
 				if pokemon.name == pokemon_prev:
 					pokemon.in_play = False
 			switch = True
-			switched_poke = this_turn.get_pokemon(pokemon_name)
+			switched_poke = this_turn.get_pokemon(pokemon_name, 1)
 		for match in match_p2_withdraw:
-			# r'(.*) withdrew (.*)!\n\s(.*) sent out (.*)!'
 			pokemon_name = match.group(2)
 			for pokemon in this_turn.p2_pokemon:
 				if pokemon.name == pokemon_name:
 					pokemon.in_play = False
 			switch = True
-			switched_poke = this_turn.get_pokemon(pokemon_name)
+			switched_poke = this_turn.get_pokemon(pokemon_name, 2)
 		for match in match_p1_send_out:
 			send_pokemon = match.group(1)
-			pokemon = this_turn.get_pokemon(send_pokemon)
-			if pokemon == None:
-				print(send_pokemon)
+			pokemon = this_turn.get_pokemon(send_pokemon, 1)
 			if switch:
-
 				switch_action = pokemon_classes.Switch(this_turn, battle.player2, switched_poke, pokemon)
-				this_turn.actions.append(switch_action)
+				add_action(switch_action, this_turn, battle.player2)
 				switch = False
 			else:
 				pokemon.in_play = True
@@ -178,10 +167,10 @@ def analyze_turn(number, turn, battle):
 			
 		for match in match_p2_send_out:
 			send_pokemon = match.group(2)
-			pokemon = this_turn.get_pokemon(send_pokemon)
+			pokemon = this_turn.get_pokemon(send_pokemon, 2)
 			if switch:
 				switch_action = pokemon_classes.Switch(this_turn, battle.player1, switched_poke, pokemon)
-				this_turn.actions.append(switch_action)
+				add_action(switch_action, this_turn, battle.player2)
 				switch = False
 			else:
 				pokemon.in_play = True
@@ -194,24 +183,16 @@ def analyze_turn(number, turn, battle):
 			pokemon_name = match.group(2)
 			attack = match.group(3)
 			consequences = match.group(4).strip()
-			if "opposing" in pokemon_name:
-				for pokemon in this_turn.p2_pokemon:
-					if "The opposing " + pokemon.name == pokemon_name:
-						attack_action = pokemon_classes.Attack(this_turn, battle.player2, pokemon, attack, consequences)
-						attack_action.analyze_consequence()
-						this_turn.add_action(attack_action)
-						# pokemon.actions[attack] = consequences
-						# battle.player2.actions[entire_attack] = consequences
-						break
+			if pokemon_name.startswith("The opposing "):
+				attacking_pokemon = pokemon_name.split("opposing ")[1]
+				attacking_pokemon = this_turn.get_pokemon(attacking_pokemon, 2)
+				attack_action = pokemon_classes.Attack(this_turn, battle.player2, attacking_pokemon, attack, consequences)
+				add_action(attack_action, this_turn, battle.player2, attacking_pokemon)
 			else:
-				for pokemon in this_turn.p1_pokemon:
-					if pokemon.name == pokemon_name:
-						attack_action = pokemon_classes.Attack(this_turn, battle.player1, pokemon, attack, consequences)
-						attack_action.analyze_consequence()
-						this_turn.add_action(attack_action)
-						# pokemon.actions[attack] = consequences
-						# battle.player1.actions[entire_attack] = consequences
-						break
+				attacking_pokemon = this_turn.get_pokemon(pokemon_name, 1)
+				attack_action = pokemon_classes.Attack(this_turn, battle.player1, attacking_pokemon, attack, consequences)
+				add_action(attack_action, this_turn, battle.player1, attacking_pokemon)
+
 
 def analyze_end(end, battle):
 	for line in end:
@@ -230,8 +211,13 @@ def analyze_end(end, battle):
 				battle.winner = battle.player2
 			else:
 				battle.winner = battle.player1
-		# else:
-		# 	battle.end_result = "completed battle"
+
+def add_action(action, turn, player, pokemon = None):
+	turn.add_action(action)
+	player.add_action(player)
+	if pokemon:
+		pokemon.add_action(action)
+
 
 class Test(unittest.TestCase):
 
@@ -256,20 +242,24 @@ class Test(unittest.TestCase):
 		self.assertTrue(self.battle.get_turn(1).get_pokemon("Kangaskhan", 1).mega_evolved) #make sure Kanghaskan mega_evolved
 		self.assertTrue(self.battle.get_turn(2).get_pokemon("Kangaskhan", 1).mega_evolved)
 		self.assertFalse(self.battle.get_turn(0).get_pokemon("Kangaskhan", 1).mega_evolved)
-	def test_actions(self):
-		pass
-		# print(self.battle.player2.start_team[1].actions)
-		# self.assertEqual(self.battle.player2.actions["The opposing Meowstic used Quick Guard!"], "Quick Guard protected the opposing team!")
-		# self.assertEqual(self.battle.player1.actions["Kangaskhan used Fake Out!"], "Quick Guard protected the opposing Meowstic!")
-		# self.assertEqual(self.battle.player2.start_team[1].actions)
-		#need to fix multiple consequences to one action
-		#need to fix multiples of the same actin by the same move and not replacing from a previous turn
+	# def test_print_actions(self):
+	# 	print("Turn 2")
+	# 	for action in self.battle.get_turn(2).actions:
+	# 		if action.type == "switch":
+	# 			print("Turn order " + str(action.order) + " : Player " + action.player.name + "; Action " + action.type + "; Withdrew " + action.withdraw_poke.name + "; Sent " + action.send_poke.name)
+	# 		else:
+	# 			if action.damage:
+	# 				print("Turn order " + str(action.order) + " : Player " + action.player.name + "; Action " + action.type + "; " + action.pokemon.name + " used " + action.attack + "; Damage: " + str(action.damage[0]) + "-" + str(action.damage[1]) + "; " + action.effected_pokemon.name)
+	# 			else:
+	# 				print("Turn order " + str(action.order) + " : Player " + action.player.name + "; Action " + action.type + "; " + action.pokemon.name + " used " + action.attack + "; Consequence: " + action.consequence)
 
+	
 	def test_fainted(self):
 		self.assertTrue(self.battle.get_turn(2).get_pokemon("Kangaskhan", 1).fainted)
 		self.assertFalse(self.battle.get_turn(2).get_pokemon("Kangaskhan", 1).in_play)
 		self.assertTrue(self.battle.get_turn(3).get_pokemon("Kangaskhan", 1).fainted)
 		self.assertFalse(self.battle.get_turn(2).get_pokemon("Meowstic", 2).fainted)
+		# self.assertTrue(self.battle.get_turn(3).get_pokemon("Charizard", 2).fainted)
 		
 	def test_switch(self):
 		self.assertFalse(self.battle.get_turn(2).get_pokemon("Meowstic", 2).in_play)
@@ -286,26 +276,24 @@ class Test(unittest.TestCase):
 		self.assertEqual(self.battle.get_turn(2).get_pokemon("Meowstic", 2), self.battle.get_turn(3).get_pokemon("Meowstic", 2).prev_copy)
 		self.assertEqual(self.battle.player2.team[1].prev_copy, None)
 
-# read_body('Example_Battle_Format.txt')
+	def test_action(self):
+		self.assertEqual(len(self.battle.get_turn(1).actions), 4)
+		self.assertEqual(self.battle.get_turn(1).get_action(4).pokemon.name, "Gourgeist-Super") 
+		self.assertEqual(len(self.battle.get_turn(3).get_pokemon("Charizard", 2).actions), 2)
+		self.assertEqual(len(self.battle.get_turn(1).get_pokemon("Charizard", 2).actions), 1)
+		self.assertEqual(self.battle.get_turn(1).get_pokemon("Charizard", 2).actions[0].consequence, "Kangaskhan lost 60.5–62.5% of its health!\nGourgeist-Super avoided the attack!")
 
-	# def testError(self):
-	# 	raise RuntimeError('Test error!')
+
+
+
+	def test_damage(self):
+		self.assertEqual(self.battle.get_turn(3).get_pokemon("Charizard", 2).health, [68.7, 66.7])
+		self.assertEqual(self.battle.get_turn(1).get_pokemon("Charizard", 2).health, 100)
+		self.assertEqual(self.battle.get_turn(3).get_pokemon("Kangaskhan", 1).health, 0)
+		self.assertEqual(self.battle.get_turn(1).get_pokemon("Kangaskhan", 1).health, [39.5, 37.5])
+
 
 if __name__ == "__main__":
 	# battle = read_body(sys.argv[1])
 	# battle = read_body('Example_Battle_Format')
 	unittest.main()
-
-
-
-#divide into description, intro, turns, after_battle
-#return a Dictionary?
-#.... joined
-#___________
-#Battle between _____ and ____ started!
-#___________
-#Turn 1
-#___________
-# redfor lost due to inactivity.
-# or 
-# BOON305 won the battle!

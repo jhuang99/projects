@@ -48,18 +48,6 @@ class Turn:
 		"""displays the status of each player's pokemon at the end of each turn"""
 		print(battle.player1 + "'s pokemon alive:" + player1.team)
 
-	# def get_pokemon(self, player, name):
-	# 	if player == 1:
-	# 		for pokemon in self.p1_pokemon:
-	# 			if pokemon.name == name:
-	# 				return pokemon
-	# 		print("Pokemon not found")
-	# 	else:
-	# 		for pokemon in self.p2_pokemon:
-	# 			if pokemon.name == name:
-	# 				return pokemon
-	# 		print("Pokemon not found")
-
 	def get_pokemon(self, name, player = None):
 		if player == 1:
 			for pokemon in self.p1_pokemon:
@@ -78,6 +66,8 @@ class Turn:
 					# print(pokemon.name)
 					return pokemon
 			print("pokemon not found")
+	def get_action(self, number):
+		return self.actions[number - 1]
 
 
 class Action:
@@ -99,26 +89,33 @@ class Action:
 
 class Attack(Action):
 
-	def __init__(self, turn, player, pokemon, attack, consequence):
+	def __init__(self, turn, player, pokemon, move, consequence):
 		Action.__init__(self, turn, player, "attack")
 		self.pokemon = pokemon
-		self.attack = attack
+		self.move = move
 		self.consequence = consequence
+		self.order = Action.order
+		self.analyze_consequence()
+		self.damage = None
 
 	def analyze_consequence(self):
-		damage_match = re.finditer('(The opposing )?(.*) lost (.*)% of its health', self.consequence)
+		damage_match = re.finditer('(The opposing )?(.*) lost (.*)% of its health!', self.consequence)
 		for match in damage_match:
-			pokemon_effected = match.group(2) 
+			pokemon_effected = match.group(2)
 			pokemon = self.turn.get_pokemon(pokemon_effected)
+			self.effected_pokemon = pokemon
 			damage = match.group(3)
 			if '–' in damage:
+				
 				range_damage = damage.split("–")
-				range_damage = [int(float(number)) for number in range_damage]
+				range_damage = [float(number) for number in range_damage]
+				self.damage = range_damage
 				if pokemon.health == 100:
 					pokemon.health = [100, 100]
-				pokemon_health = [health - damage for health, damage in zip(pokemon.health, range_damage)]
+				pokemon.health = [health - damage for health, damage in zip(pokemon.health, range_damage)]
 			else:
-				damage = int(float(damage))
+				damage = float(damage)
+				self.damage = damage
 				pokemon.health -= damage
 
 			# for pokemon in self.turn.p1_pokemon + self.turn.p2_pokemon:
@@ -128,11 +125,11 @@ class Attack(Action):
 class Switch(Action):
 	def __init__(self, turn, player, withdraw_poke, send_poke):
 		Action.__init__(self, turn, player, "switch")
+		self.order = Action.order
 		self.withdraw_poke = withdraw_poke
 		self.send_poke = send_poke
 		withdraw_poke.in_play = False
 		send_poke.in_play = True
-
 
 
 class Player:
@@ -142,29 +139,31 @@ class Player:
 		self.number = number
 		self.team = []
 		self.win = False
-		self.actions = {}
+		self.actions = []
 
 	def has_won(self):
 		"""Checks to see if player has won"""
 		if won:
 			self.win = true
 
+	def add_action(self, action):
+		self.actions.append(action)
 
 	
 class Pokemon:
 	"""Each pokemon"""
 	def __init__(self, pokemon, trainer):
 		self.turn = 0
-		self.type = pokemon
-		self.name = self.type
+		self.name = pokemon
+		self.nickname = None
 		if "*" in pokemon:
 			self.name = "Gourgeist-Super"
-		#cheat mode to get around game
+		#cheat mode to get around * marked pokemon
 		self.trainer = trainer
 		self.item = None
 		self.fainted = False
 		self.turn_fainted = False
-		self.actions = {} # map action to the effect
+		self.actions = [] # list of action objects
 		self.mega_evolved = False
 		self.status_condition = []
 		self.health = 100
@@ -185,6 +184,10 @@ class Pokemon:
 
 	def take_damage(self, damage):
 		self.health -= damage
+
+	def add_action(self, action):
+		self.actions.append(action)
+	
 
 
 #Organize each Text into different Blocks 
