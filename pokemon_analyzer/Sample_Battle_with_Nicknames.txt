@@ -1,0 +1,191 @@
+ Ignore Spectators  Ignore Opponent
+E4 Landorus joined.
+Meganium Trainor joined.
+Format: 
+Monotype
+Rated battle
+Baton Pass Clause: Limit one Pokémon knowing Baton Pass
+Swagger Clause: Swagger is banned
+Same Type Clause: Pokémon in a team must share a type
+Sleep Clause Mod: Limit one foe put to sleep
+Species Clause: Limit one of each Pokémon
+OHKO Clause: OHKO moves are banned
+Moody Clause: Moody is banned
+Evasion Moves Clause: Evasion moves are banned
+Endless Battle Clause: Forcing endless battles is banned
+HP Percentage Mod: HP is shown in percentages
+E4 Landorus's team:
+Swampert / Nidoking / Landorus / Quagsire / Garchomp / Excadrill
+Meganium Trainor's team:
+Diancie / Klefki / Clefable / Gardevoir / Azumarill / Togekiss
+Battle between E4 Landorus and Meganium Trainor started!
+
+Go! Garchomp!
+
+Meganium Trainor sent out Hashtag Goals(Klefki)!
+Turn 1
+
+The opposing Hashtag Goals used Reflect!
+Reflect raised the opposing team's Defense!
+
+Garchomp used Earthquake!
+It's super effective! The opposing Hashtag Goals lost 66% of its health!Turn 2
+
+Garchomp, come back!
+
+Go! Nidoking!
+
+Meganium Trainor withdrew Hashtag Goals(Klefki)!
+
+Meganium Trainor sent out Eggy Azalea(Togekiss)!
+Turn 3
+
+Meganium Trainor withdrew Eggy Azalea(Togekiss)!
+
+Meganium Trainor sent out Hashtag Goals(Klefki)!
+
+Nidoking used Thunderbolt!
+The opposing Hashtag Goals lost 34% of its health!
+
+The opposing Hashtag Goals fainted!
+
+Meganium Trainor sent out JAMESDEENDAYDREAM (Azumarill)!
+Turn 4
+
+Nidoking used Sludge Wave!
+A critical hit! It's super effective! The opposing JAMESDEENDAYDREAM lost 100% of its health!
+
+The opposing JAMESDEENDAYDREAM fainted!
+
+Meganium Trainor sent out Marina (Diancie)!
+Turn 5
+★Meganium Trainor: Im hella ded
+
+Nidoking, come back!
+
+Go! Excadrill!
+Excadrill breaks the mold!
+
+The opposing Marina used Earth Power!
+It's super effective! Excadrill lost 63% of its health!
+Turn 6
+
+Excadrill, come back!
+
+Go! Landorus!
+
+The opposing Marina used Earth Power!
+It doesn't affect Landorus...
+Turn 7
+
+The opposing Marina's Diancite is reacting to Meganium Trainor's Mega Bracelet!
+The opposing Marina has Mega Evolved into Mega Diancie!
+
+Landorus used Gravity!
+Gravity intensified!
+
+The opposing Marina used Moonblast!
+Landorus lost 79% of its health!
+Turn 8
+
+The opposing Marina used Hidden Power!
+Landorus lost 21% of its health!
+
+Landorus fainted!
+
+The opposing team's Reflect wore off!
+
+Go! Excadrill!
+Excadrill breaks the mold!
+Turn 9
+
+Meganium Trainor withdrew Marina (Diancie-Mega)!
+
+Meganium Trainor sent out MOON POWER(Clefable)!
+
+Excadrill used Iron Head!
+It's super effective! The opposing MOON POWER lost 65% of its health!
+
+The opposing MOON POWER restored a little HP using its Leftovers!
+Turn 10
+
+Excadrill used Iron Head!
+A critical hit! It's super effective! The opposing MOON POWER lost 41% of its health!
+
+The opposing MOON POWER fainted!
+
+Meganium Trainor sent out White People(Gardevoir)!
+The opposing White People traced Excadrill's Mold Breaker!
+The opposing White People breaks the mold!
+Turn 11
+
+Excadrill used Iron Head!
+A critical hit! It's super effective! The opposing White People lost 100% of its health!
+
+The opposing White People fainted!
+
+Gravity returned to normal!
+
+Meganium Trainor sent out Eggy Azalea(Togekiss)!
+Turn 12
+
+Excadrill, come back!
+
+Go! Nidoking!
+
+The opposing Eggy Azalea used Air Slash!
+Nidoking lost 43% of its health!
+Turn 13
+
+Nidoking used Sludge Wave!
+It's super effective! The opposing Eggy Azalea lost 100% of its health!
+
+The opposing Eggy Azalea fainted!
+
+Meganium Trainor sent out Marina (Diancie-Mega)!
+Turn 14
+
+Nidoking, come back!
+
+Go! Quagsire!
+
+The opposing Marina used Earth Power!
+Quagsire lost 48% of its health!
+
+Quagsire restored a little HP using its Leftovers!
+Turn 15
+
+The opposing Marina used Earth Power!
+Quagsire lost 43% of its health!
+
+Quagsire used Earthquake!
+It's super effective! The opposing Marina lost 78% of its health!
+
+Quagsire restored a little HP using its Leftovers!
+Turn 16
+
+The opposing Marina used Earth Power!
+Quagsire lost 20% of its health!
+
+Quagsire fainted!
+
+Go! Excadrill!
+Excadrill breaks the mold!
+Turn 17
+
+Excadrill used Earthquake!
+A critical hit! It's super effective! The opposing Marina lost 22% of its health!
+
+The opposing Marina fainted!
+
+E4 Landorus won the battle!
+Ladder updating...
+★Meganium Trainor: gggghg
+★E4 Landorus: gg
+Meganium Trainor left.
+E4 Landorus left.
+E4 Landorus's rating: 1358 → 1384
+(+26 for winning)
+Meganium Trainor's rating: 1467 → 1441
+(-26 for losing)
+
