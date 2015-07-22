@@ -1,0 +1,224 @@
+ Ignore Spectators  Ignore Opponent
+Sergsh joined.
+gengar2345678 joined.
+Format: 
+Random Battle
+Rated battle
+Sleep Clause Mod: Limit one foe put to sleep
+HP Percentage Mod: HP is shown in percentages
+Battle between Sergsh and gengar2345678 started!
+
+Go! Crawdaunt!
+
+gengar2345678 sent out Shedinja!
+Turn 1
+
+gengar2345678 withdrew Shedinja!
+
+gengar2345678 sent out Mandibuzz!
+
+Crawdaunt used Swords Dance!
+Crawdaunt's Attack sharply rose!
+Turn 2
+
+Crawdaunt used Crabhammer!
+The opposing Mandibuzz avoided the attack!
+
+The opposing Mandibuzz used Whirlwind!
+
+Girafarig was dragged out!
+Turn 3
+
+Girafarig used Thunderbolt!
+It's super effective! The opposing Mandibuzz lost 44% of its health!
+
+The opposing Mandibuzz used Toxic!
+Girafarig was badly poisoned!
+
+The opposing Mandibuzz restored a little HP using its Leftovers!
+Girafarig was hurt by poison!
+Turn 4
+
+Girafarig used Thunderbolt!
+It's super effective! The opposing Mandibuzz lost 45% of its health!
+
+The opposing Mandibuzz used Roost!
+The opposing Mandibuzz regained health!
+
+Girafarig restored a little HP using its Leftovers!
+The opposing Mandibuzz restored a little HP using its Leftovers!
+Girafarig was hurt by poison!
+Turn 5
+
+gengar2345678 withdrew Mandibuzz!
+
+gengar2345678 sent out Shedinja!
+
+Girafarig used Thunderbolt!
+The opposing Shedinja's Wonder Guard evades the attack!
+
+Girafarig restored a little HP using its Leftovers!
+Girafarig was hurt by poison!
+Turn 6
+
+Girafarig, come back!
+
+Go! Crawdaunt!
+
+The opposing Shedinja used Swords Dance!
+The opposing Shedinja's Attack sharply rose!
+Turn 7
+
+Crawdaunt used Knock Off!
+It's super effective! The opposing Shedinja hung on using its Focus Sash!
+The opposing Shedinja lost 0% of its health!
+Crawdaunt lost some of its HP!
+
+The opposing Shedinja used X-Scissor!
+It's super effective! Crawdaunt lost 91% of its health!
+
+Crawdaunt fainted!
+
+Go! Talonflame!
+Turn 8
+
+Talonflame used Swords Dance!
+Talonflame's Attack sharply rose!
+
+The opposing Shedinja used X-Scissor!
+It's not very effective... Talonflame lost 23% of its health!
+
+Talonflame restored a little HP using its Leftovers!
+Turn 9
+
+Talonflame used Swords Dance!
+Talonflame's Attack sharply rose!
+
+The opposing Shedinja used X-Scissor!
+It's not very effective... Talonflame lost 25% of its health!
+
+Talonflame restored a little HP using its Leftovers!
+Turn 10
+
+Talonflame used Roost!
+Talonflame regained health!
+
+The opposing Shedinja used X-Scissor!
+It's not very effective... Talonflame lost 49% of its health!
+
+Talonflame restored a little HP using its Leftovers!
+Turn 11
+
+Talonflame used Brave Bird!
+It's super effective! The opposing Shedinja lost 100% of its health!
+Talonflame is damaged by the recoil!
+
+The opposing Shedinja fainted!
+
+Talonflame restored a little HP using its Leftovers!
+
+gengar2345678 sent out Manectric!
+Turn 12
+
+The opposing Manectric's Manectite is reacting to gengar2345678's Mega Bracelet!
+The opposing Manectric has Mega Evolved into Mega Manectric!
+The opposing Manectric intimidates Talonflame!
+Talonflame's Attack fell!
+
+Talonflame used Flare Blitz!
+The opposing Manectric lost 100% of its health!
+Talonflame is damaged by the recoil!
+
+The opposing Manectric fainted!
+
+Talonflame restored a little HP using its Leftovers!
+
+gengar2345678 sent out Alomomola!
+Turn 13
+
+Talonflame used Brave Bird!
+The opposing Alomomola lost 70% of its health!
+Talonflame is damaged by the recoil!
+
+Talonflame fainted!
+
+The opposing Alomomola used Scald!
+But there was no target...
+
+The opposing Alomomola restored a little HP using its Leftovers!
+
+Go! Girafarig!
+Turn 14
+
+Girafarig used Thunderbolt!
+It's super effective! The opposing Alomomola lost 36% of its health!
+
+The opposing Alomomola fainted!
+
+Girafarig restored a little HP using its Leftovers!
+Girafarig was hurt by poison!
+
+gengar2345678 sent out Volcarona!
+Turn 15
+
+The opposing Volcarona used Quiver Dance!
+The opposing Volcarona's Special Attack rose!
+The opposing Volcarona's Special Defense rose!
+The opposing Volcarona's Speed rose!
+
+Girafarig used Thunderbolt!
+The opposing Volcarona lost 15% of its health!
+
+The opposing Volcarona restored a little HP using its Leftovers!
+Girafarig restored a little HP using its Leftovers!
+Girafarig was hurt by poison!
+Turn 16
+
+Girafarig, come back!
+
+Go! Yanmega!
+
+The opposing Volcarona used Quiver Dance!
+The opposing Volcarona's Special Attack rose!
+The opposing Volcarona's Special Defense rose!
+The opposing Volcarona's Speed rose!
+
+The opposing Volcarona restored a little HP using its Leftovers!
+Turn 17
+
+Yanmega used Protect!
+Yanmega protected itself!
+
+The opposing Volcarona used Fiery Dance!
+Yanmega protected itself!
+
+The opposing Volcarona restored a little HP using its Leftovers!
+Yanmega's Speed Boost raised its Speed!
+Turn 18
+
+The opposing Volcarona used Fiery Dance!
+It's super effective! Yanmega lost 100% of its health!
+
+Yanmega fainted!
+
+Go! Krookodile!
+Turn 19
+
+The opposing Volcarona used Giga Drain!
+It's super effective! Krookodile lost 100% of its health!
+
+Krookodile fainted!
+
+Go! Sylveon!
+Turn 20
+
+Sergsh forfeited.
+
+gengar2345678 won the battle!
+Ladder updating...
+Sergsh left.
+Sergsh's rating: 1146 → 1119
+(-27 for losing)
+gengar2345678's rating: 1121 → 1148
+(+27 for winning)
+gengar2345678 left.

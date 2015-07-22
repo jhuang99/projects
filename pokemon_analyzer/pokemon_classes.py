@@ -30,6 +30,9 @@ class Battle:
 
 	def get_turn(self, number):
 		return self.all_turns[number]
+	def get_pokemon(self, pokemon):
+		last_turn = self.get_turn(self.turn_number)
+		return last_turn.get_pokemon(pokemon)
 
 
 
@@ -54,28 +57,31 @@ class Turn:
 		if player == 1:
 			for pokemon in self.p1_pokemon:
 
-				if pokemon.name == name or pokemon.nickname == name:
+				if pokemon.name == name or pokemon.nickname == name or (type(name) == Pokemon and name == pokemon):
 					return pokemon
 				elif pokemon.mega_evolved and pokemon.name + "-Mega" == name:
 					return pokemon
-			print(name + " not found in Player's 1 team")
+			print(str(name) + " not found in Player's 1 team")
 		elif player == 2:
 			for pokemon in self.p2_pokemon:
-				if pokemon.name == name or pokemon.nickname == name:
+				if pokemon.name == name or pokemon.nickname == name or (type(name) == Pokemon and name == pokemon):
 					return pokemon
 				elif pokemon.mega_evolved and pokemon.name + "-Mega" == name:
 					return pokemon
-			print(name + " not found in Player's 2 team")
+			print(str(name) + " not found in Player's 2 team")
 		else:
 			for pokemon in self.p1_pokemon + self.p2_pokemon:
-				if pokemon.name == name or pokemon.nickname == name:
+				if pokemon.name == name or pokemon.nickname == name or (type(name) == Pokemon and name == pokemon):
 					return pokemon
 				elif pokemon.mega_evolved and pokemon.name + "-Mega" == name:
 					return pokemon
-			print( name + " not found in the battle")
+			print( str(name) + " not found in the battle")
 
 	def get_action(self, number):
 		return self.actions[number - 1]
+
+	def __str__(self):
+		return "Turn {self.number}".format(self = self)
 
 class Pokemon:
 	"""Each pokemon"""
@@ -97,6 +103,7 @@ class Pokemon:
 		self.prev_copy = None
 		self.in_play = False
 		self.defeated_action = None
+		self.stat_changes = []
 
 		#each turn, has a list of things that happened to it: damage, stats effected, fainted? by who
 
@@ -117,7 +124,7 @@ class Pokemon:
 		self.health = 0
 		self.in_play = False
 		turn.get_action(len(turn.actions)).defeated = self
-		turn.get_action(len(turn.actions)).consequence += " " + self.name + " fainted."
+		# turn.get_action(len(turn.actions)).consequence += " " + self.name + " fainted."
 		self.defeated_action = turn.get_action(len(turn.actions))
 
 
@@ -149,6 +156,7 @@ class Action:
 		Action.order = 0
 
 	def __str__(self):
+		# return "cat"
 		pass
 
 class Attack(Action):
@@ -157,79 +165,80 @@ class Attack(Action):
 		Action.__init__(self, battle, turn, player, "attack")
 		self.pokemon = pokemon
 		self.move = move
-		self.consequence = consequence
+		self.consequence_string = consequence
+		self.consequences = []
 		self.order = Action.order
-		# self.effected_pokemon = []
-		# self.damage = []
-		# self.effectiveness = []
-		# self.defeated = []
-		# self.effected_pokemon = []
-		# self.critical = [False, False]
 		self.analyze_consequence()
-#find a way in doubles to record what happens if 2 pokemon are effected
 
 
 	def analyze_consequence(self):
-		damage_match = re.finditer('((A critical hit!)?(\s)?(It\'s (.*) effective(!|\.\.\.))?(\s)?(The opposing)?(\s)?([^!.]*) lost (.*)% of its health!)', self.consequence)
+		damage_match = re.finditer('((A critical hit!)?(\s)?(It\'s (.*) effective(!|\.\.\.))?(\s)?(The opposing)?(\s)?([^!.]*) lost (.*)% of its health!)', self.consequence_string)
 		
-		stats_move_match = re.finditer(self.move +  '(raised|lowered) (the opposing|your) team\'s (.*)!', self.consequence)
-		stats_match = re.finditer('(The opposing)?(\s)?(.*)\'s (.*)(\s)?(sharply)?(\s)?(rose|fell)!', self.consequence)
+		stats_move_match = re.finditer('(.*) (raised|lowered) (the opposing|your) team\'s (.*)!', self.consequence_string)
+		stats_match = re.finditer('(The opposing )?(.*)\'s (.*) (sharply)?(\s)?(rose|fell)!', self.consequence_string)
 		status = {"poisoned": "(The opposing )?(.*) was badly poisoned!", "paralyzed": "(The opposing )?(.*) is paralyzed!", "burned": "(The opposing )?(.*) was burned!", "sleep": "(The opposing )?(.*) fell asleep!"}
 		dictionary = {}
 		for status_condition, wording in status.items():
-			dictionary[re.finditer(wording, self.consequence)] = status_condition
-
-		# The opposing Volcarona's Special Attack rose!
-		#Light Screen raised the opposing team's Special Defense!
-		# Fenrir's Attack rose!
-		# Maria Magda's Weakness Policy activated!
-# The Weakness Policy sharply raised Maria Magda's Attack!
-# The Weakness Policy sharply raised Maria Magda's Special Attack!
-#Arthon's Special Attack sharply rose!
-
-		# The opposing Volcarona was badly poisoned!
-# Arthon is paralyzed! It may be unable to move!
-# was burned!
-#fell asleep!
-
+			dictionary[re.finditer(wording, self.consequence_string)] = status_condition
 
 		for match in damage_match:
+
 			critical_hit = match.group(2)
 			effectiveness = match.group(5)
-			# if not effectiveness:
-			# 	self.effectiveness = "None"
-			# else:
-			# 	self.effectiveness = effectiveness
-			# if critical_hit:
-			# 	self.critical = True
 			pokemon_target_name = match.group(10)
 			pokemon_targeted = self.turn.get_pokemon(pokemon_target_name)
 			damage = match.group(11)
-			consequence = Damage(self.pokemon, pokemon_targeted, damage, effectiveness, critical_hit)
-			# pokemon = self.turn.get_pokemon(pokemon_effected)
-			# self.effected_pokemon = pokemon
-			# if '–' in damage:
-			# 	range_damage = damage.split("–")
-			# 	range_damage = [float(number) for number in range_damage]
-			# 	self.damage = range_damage
-			# 	if pokemon.health == 100:
-			# 		pokemon.health = [100, 100]
-			# 	pokemon.health = [health - damage for health, damage in zip(pokemon.health, range_damage)]
-			# else:
-			# 	damage = float(damage)
-			# 	self.damage = damage
-			# 	pokemon.health -= damage
+			self.consequences.append(Damage(self.pokemon, pokemon_targeted, damage, effectiveness, critical_hit))
 
+		for match in stats_move_match:
+			# print(self.consequence_string)
+			effect = match.group(2)
+			team = match.group(3)
+			stat_effected = match.group(4)
+			if team == "your":
+				for pokemon in self.turn.p1_pokemon:
+					if pokemon.in_play:
+						self.consequences.append(Stat_Changes(self.pokemon, pokemon, stat_effected, effect))
+			else:
+				for pokemon in self.turn.p2_pokemon:
+					if pokemon.in_play:
+						self.consequences.append(Stat_Changes(self.pokemon, pokemon, stat_effected, effect))
+		for match in stats_match:
+			opposing = match.group(1)
+			effected_pokemon = match.group(2)
+			stat_effected = match.group(3)
+			effect = match.group(6)
+			pokemon = self.turn.get_pokemon(effected_pokemon)
+			self.consequences.append(Stat_Changes(self.pokemon, pokemon, stat_effected, effect))
 
-	# def __str__(self):
-	# 	return "Pokemon: " + self.pokemon.name + "\nAttack: " + self.move + "\nEffected: " + str(self.target_pokemon) + "\nDamage: " + str(self.damage) + "\nEffectiveness: " + self.effectiveness + "\nCritical: " + str(self.critical) + "\nFainted: " + str(self.defeated) + "\nEffect: " + self.consequence + "\n"
+		for match_iter, status in dictionary.items():
+			for match in match_iter:
+				opposing = match.group(1)
+				pokemon_name = match.group(2)
+				if opposing:
+					pokemon = self.turn.get_pokemon(pokemon_name, 2)
+				else:
+					pokemon = self.turn.get_pokemon(pokemon_name, 1)
+				self.consequences.append(Status_Effects(self.pokemon, pokemon, status))
+
+	def return_consequences(self):
+		to_return = ""
+		for x in self.consequences:
+			to_return += str(x)
+		return to_return 
+
+	def __str__(self):
+		return "Pokemon: " + self.pokemon.name + "\nAttack: " + self.move + self.return_consequences() + "\n"
+
 
 class Consequences:
 	def __init__(self, type, acting_pokemon, target_pokemon):
 		self.type = type
 		self.acting_pokemon = acting_pokemon
 		self.target_pokemon = target_pokemon
-		# self.effects = effects
+
+	def __str__(self):
+		pass
 
 class Damage(Consequences):
 	def __init__(self, acting_pokemon, target_pokemon, damage, effectiveness, critical_hit):
@@ -240,14 +249,6 @@ class Damage(Consequences):
 		self.take_damage()
 		
 	def take_damage(self):
-		# if not effectiveness:
-		# 	self.effectiveness = "None"
-		# else:
-		# 	self.effectiveness = effectiveness
-		# if critical_hit:
-		# 	self.critical = True
-		# pokemon = self.turn.get_pokemon(pokemon_effected)
-		# self.target_pokemon = pokemon
 		if '–' in self.damage:
 			range_damage = self.damage.split("–")
 			range_damage = [float(number) for number in range_damage]
@@ -258,13 +259,28 @@ class Damage(Consequences):
 		else:
 			self.damage = float(self.damage)
 			self.target_pokemon.health -= self.damage
+	def __str__(self):
+		if not self.effectiveness:
+			self.effectiveness = "normal"
+		return "\nEffected: " + str(self.target_pokemon) + "\nDamage: " + str(self.damage) + "\nEffectiveness: " + self.effectiveness + "\nCritical: " + str(self.critical_hit)
 
 class Status_Effects(Consequences):
-	pass
+	def __init__(self, acting_pokemon, target_pokemon, status_change):
+		Consequences.__init__(self, "status_effect", acting_pokemon, target_pokemon)
+		self.status = status_change
+		target_pokemon.status_condition += self.status
+	def __str__(self):
+		return "\nEffected: " + str(self.target_pokemon) + "\nStatus Condition: " + self.status
 
 class Stat_Changes(Consequences):
-	pass
-
+	def __init__(self, acting_pokemon, target_pokemon, stat, change):
+		Consequences.__init__(self, "stat_change", acting_pokemon, target_pokemon)
+		self.stat = stat
+		self.change = change
+		self.target_pokemon.stat_changes.append(stat + " " + change)
+	
+	def __str__(self):
+		return "\nEffected: " + str(self.target_pokemon) + "\nStats: " + self.stat + " " + self.change
 
 
 
@@ -276,8 +292,8 @@ class Switch(Action):
 		self.send_poke = send_poke
 		withdraw_poke.in_play = False
 		send_poke.in_play = True
-	# def __str__(self):
-	# 	return  "Player: " + self.player.name + "\nWithdrew: " + self.withdraw_poke.name + "\nSent: " + self.send_poke.name + "\n"
+	def __str__(self):
+		return  "\nPlayer: " + self.player.name + "\nWithdrew: " + self.withdraw_poke.name + "\nSent: " + self.send_poke.name
 
 
 class Player:
@@ -297,10 +313,10 @@ class Player:
 	def add_action(self, action):
 		self.actions.append(action)
 
-#to see fainted, check the last action
+	def __str__(self):
+		return self.name
 
-# burned, frozen, paralyzed, stats, 
-	
+
 
 # can organize by player, by turn, by pokemon 
 # what would someone want to know after a game

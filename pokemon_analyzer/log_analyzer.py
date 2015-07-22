@@ -247,6 +247,8 @@ class Test(unittest.TestCase):
 	def setUpClass(cls):
 		cls.battle = read_body('Example_Battle_Format.txt')
 		cls.battle2 = read_body( 'Sample_Battle_with_Nicknames.txt')
+		cls.battle3 = read_body( 'Example_Battle_3.txt')
+		# cls.battle4 = read_body('Battle_4.txt')
 		cls.battle5 = read_body('Battle 5.txt')
 
 	def test_both_players(self):
@@ -272,11 +274,12 @@ class Test(unittest.TestCase):
 		self.assertTrue(self.battle.get_turn(1).get_pokemon("Kangaskhan", 1).mega_evolved) #make sure Kanghaskan mega_evolved
 		self.assertTrue(self.battle.get_turn(2).get_pokemon("Kangaskhan", 1).mega_evolved)
 		self.assertFalse(self.battle.get_turn(0).get_pokemon("Kangaskhan", 1).mega_evolved)
-	# def test_print_turn_actions(self):
-	# 	for turn in self.battle5.all_turns:
-	# 		print("Turn: " + str(turn.number)) 
-	# 		for action in turn.actions:
-	# 			print(action)
+
+	def test_print_turn_actions(self):
+		for turn in self.battle3.all_turns:
+			print("Turn: " + str(turn.number) + "\n") 
+			for action in turn.actions:
+				print(action)
 	
 	def test_fainted(self):
 		self.assertTrue(self.battle.get_turn(2).get_pokemon("Kangaskhan", 1).fainted)
@@ -307,7 +310,8 @@ class Test(unittest.TestCase):
 		self.assertEqual(self.battle.get_turn(1).get_action(4).pokemon.name, "Gourgeist-Super") 
 		self.assertEqual(len(self.battle.get_turn(3).get_pokemon("Charizard", 2).actions), 2)
 		self.assertEqual(len(self.battle.get_turn(1).get_pokemon("Charizard", 2).actions), 1)
-		self.assertEqual(self.battle.get_turn(1).get_pokemon("Charizard", 2).actions[0].consequence, "Kangaskhan lost 60.5–62.5% of its health!\nGourgeist-Super avoided the attack!")
+		self.assertEqual(len(self.battle2.get_turn(1).actions), 2)
+		# self.assertEqual(self.battle.get_turn(1).get_pokemon("Charizard", 2).actions[0].consequence, "Kangaskhan lost 60.5–62.5% of its health!\nGourgeist-Super avoided the attack!")
 
 	def test_damage(self):
 		self.assertEqual(self.battle.get_turn(3).get_pokemon("Charizard", 2).health, [68.7, 66.7])
