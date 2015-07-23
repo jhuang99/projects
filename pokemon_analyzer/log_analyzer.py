@@ -5,6 +5,7 @@ import sys
 
 
 def read_body(filename):
+	"""Opens a txt file of a battle and organizes the content of the battle"""
 	log_file = open(filename, "r") #opens the text_file
 	battle = pokemon_classes.Battle() 
 	start = [] #the lines associated before the first turn
@@ -38,6 +39,7 @@ def read_body(filename):
 	return battle
 
 def analyze_start(start, battle):
+	"""Analyzes the beginning of a battle before any turns"""
 	numOfPlayers = 0
 	format = False
 	player1Team = False
@@ -86,7 +88,7 @@ def analyze_start(start, battle):
 		
 
 def split_turns(middle): 
-	#returns a dictionary of number to Turn, starting at 0
+	"""Returns a dictionary of number to Turn, starting at 0"""
 	turn_num = 0
 	new_turn = ""
 	string_turns = {}
@@ -101,6 +103,7 @@ def split_turns(middle):
 	return string_turns
 
 def analyze_turn(number, turn, battle):
+	"""Analyzes each individual turn"""
 	pokemon_classes.Action.reset()
 	switch = False
 	this_turn = pokemon_classes.Turn(number)
@@ -186,14 +189,12 @@ def analyze_turn(number, turn, battle):
 			pokemon = this_turn.get_pokemon(nickname, 2)
 			if switch:
 				switch_action = pokemon_classes.Switch(battle, this_turn, battle.player1, switched_poke, pokemon)
-				# print(s)
 				add_action(switch_action, this_turn, battle.player2)
 				switch = False
 			else:
 				pokemon.in_play = True
 			
-		
-
+	
 		for match in match_attack:
 			#create a new Action
 			entire_attack = match.group(1)
@@ -217,6 +218,7 @@ def analyze_turn(number, turn, battle):
 
 
 def analyze_end(end, battle):
+	"""Analyzes the end of a battle"""
 	for line in end:
 		match_inactivity = re.match( r'(.*) lost due to inactivity.', line)
 		match_forfeit = re.match( r'(.*) forfeited.', line)
@@ -235,6 +237,7 @@ def analyze_end(end, battle):
 				battle.winner = battle.player1
 
 def add_action(action, turn, player, pokemon = None):
+	"""Adds an Action object to the turn, player and pokemon"""
 	turn.add_action(action)
 	player.add_action(action)
 	if pokemon:
@@ -242,6 +245,7 @@ def add_action(action, turn, player, pokemon = None):
 
 
 class Test(unittest.TestCase):
+	"""Testing class using sample texts"""
 
 	@classmethod
 	def setUpClass(cls):
@@ -328,7 +332,6 @@ class Test(unittest.TestCase):
 	def test_pokemon_actions(self):
 		pass
 
-#should match attack that led to a faint
 
 
 

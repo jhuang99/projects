@@ -29,16 +29,17 @@ class Battle:
 			self.doubles = True
 
 	def get_turn(self, number):
+		"""returns the turn of a battle given a number"""
 		return self.all_turns[number]
+
 	def get_pokemon(self, pokemon):
+		"""returns the pokemon object given a name of a pokemon"""
 		last_turn = self.get_turn(self.turn_number)
 		return last_turn.get_pokemon(pokemon)
 
 
-
-
 class Turn:
-	"""Each Turn"""
+	"""Each Turn of a battle"""
 	def __init__(self, number):
 		self.number = number
 		self.actions = []
@@ -49,14 +50,10 @@ class Turn:
 	def add_action(self, action):
 		self.actions.append(action)
 
-	def pokemonStatus(self, battle):
-		"""displays the status of each player's pokemon at the end of each turn"""
-		print(battle.player1 + "'s pokemon alive:" + player1.team)
-
 	def get_pokemon(self, name, player = None):
+		"""Returns the pokemon object given a name of a pokemon"""
 		if player == 1:
 			for pokemon in self.p1_pokemon:
-
 				if pokemon.name == name or pokemon.nickname == name or (type(name) == Pokemon and name == pokemon):
 					return pokemon
 				elif pokemon.mega_evolved and pokemon.name + "-Mega" == name:
@@ -77,11 +74,28 @@ class Turn:
 					return pokemon
 			print( str(name) + " not found in the battle")
 
-	def get_action(self, number):
-		return self.actions[number - 1]
+	def get_action(self, n):
+		"Returns the nth action of a turn"
+		return self.actions[n - 1]
 
 	def __str__(self):
 		return "Turn {self.number}".format(self = self)
+
+class Player:
+	"""The Player"""
+	def __init__(self, name, number):
+		self.name = name
+		self.number = number
+		self.team = []
+		self.win = False
+		self.actions = [] #list of action objects 
+
+	def add_action(self, action):
+		self.actions.append(action)
+
+	def __str__(self):
+		return self.name
+
 
 class Pokemon:
 	"""Each pokemon"""
@@ -89,9 +103,6 @@ class Pokemon:
 		self.turn = 0
 		self.name = species
 		self.nickname = None
-		if "*" in species:
-			self.name = "Gourgeist-Super"
-		#cheat mode to get around * marked pokemon
 		self.trainer = trainer
 		self.item = None
 		self.fainted = False
@@ -105,12 +116,10 @@ class Pokemon:
 		self.defeated_action = None
 		self.stat_changes = []
 
-		#each turn, has a list of things that happened to it: damage, stats effected, fainted? by who
-
-
 
 
 	def copy(self, turn):
+		"""Returns a copy of the pokemon from the previous turn"""
 		poke_copy = copy.copy(self)
 		poke_copy.turn = turn.number
 		poke_copy.actions = copy.copy(self.actions)
@@ -119,12 +128,12 @@ class Pokemon:
 		return poke_copy
 
 	def faint(self, turn):
+		"""Called when a pokemon faints"""
 		self.fainted = True
 		self.turn_fainted = turn.number
 		self.health = 0
 		self.in_play = False
 		turn.get_action(len(turn.actions)).defeated = self
-		# turn.get_action(len(turn.actions)).consequence += " " + self.name + " fainted."
 		self.defeated_action = turn.get_action(len(turn.actions))
 
 
@@ -141,7 +150,7 @@ class Pokemon:
 
 
 class Action:
-	"""The Action that occurs in a turn"""
+	"""An Action object that occurs in a turn"""
 	order = 0
 	def __init__(self, battle, turn, player, action, *args):
 		Action.update_order()
@@ -156,11 +165,10 @@ class Action:
 		Action.order = 0
 
 	def __str__(self):
-		# return "cat"
 		pass
 
 class Attack(Action):
-
+	"""An attack by a pokemon"""
 	def __init__(self, battle, turn, player, pokemon, move, consequence):
 		Action.__init__(self, battle, turn, player, "attack")
 		self.pokemon = pokemon
@@ -172,8 +180,9 @@ class Attack(Action):
 
 
 	def analyze_consequence(self):
+		"""Analyzes the effects of an attack"""
+
 		damage_match = re.finditer('((A critical hit!)?(\s)?(It\'s (.*) effective(!|\.\.\.))?(\s)?(The opposing)?(\s)?([^!.]*) lost (.*)% of its health!)', self.consequence_string)
-		
 		stats_move_match = re.finditer('(.*) (raised|lowered) (the opposing|your) team\'s (.*)!', self.consequence_string)
 		stats_match = re.finditer('(The opposing )?(.*)\'s (.*) (sharply)?(\s)?(rose|fell)!', self.consequence_string)
 		status = {"poisoned": "(The opposing )?(.*) was badly poisoned!", "paralyzed": "(The opposing )?(.*) is paralyzed!", "burned": "(The opposing )?(.*) was burned!", "sleep": "(The opposing )?(.*) fell asleep!"}
@@ -182,7 +191,6 @@ class Attack(Action):
 			dictionary[re.finditer(wording, self.consequence_string)] = status_condition
 
 		for match in damage_match:
-
 			critical_hit = match.group(2)
 			effectiveness = match.group(5)
 			pokemon_target_name = match.group(10)
@@ -191,7 +199,6 @@ class Attack(Action):
 			self.consequences.append(Damage(self.pokemon, pokemon_targeted, damage, effectiveness, critical_hit))
 
 		for match in stats_move_match:
-			# print(self.consequence_string)
 			effect = match.group(2)
 			team = match.group(3)
 			stat_effected = match.group(4)
@@ -232,6 +239,7 @@ class Attack(Action):
 
 
 class Consequences:
+	"""An Object following the event of an Attack"""
 	def __init__(self, type, acting_pokemon, target_pokemon):
 		self.type = type
 		self.acting_pokemon = acting_pokemon
@@ -241,6 +249,7 @@ class Consequences:
 		pass
 
 class Damage(Consequences):
+	"""A type of Consequence that results from an Action that causes Damage"""
 	def __init__(self, acting_pokemon, target_pokemon, damage, effectiveness, critical_hit):
 		Consequences.__init__(self, "damage", acting_pokemon, target_pokemon)
 		self.damage = damage
@@ -265,6 +274,7 @@ class Damage(Consequences):
 		return "\nEffected: " + str(self.target_pokemon) + "\nDamage: " + str(self.damage) + "\nEffectiveness: " + self.effectiveness + "\nCritical: " + str(self.critical_hit)
 
 class Status_Effects(Consequences):
+	"""A type of Consequence that results from an Action that causes a Status Condition"""
 	def __init__(self, acting_pokemon, target_pokemon, status_change):
 		Consequences.__init__(self, "status_effect", acting_pokemon, target_pokemon)
 		self.status = status_change
@@ -273,6 +283,7 @@ class Status_Effects(Consequences):
 		return "\nEffected: " + str(self.target_pokemon) + "\nStatus Condition: " + self.status
 
 class Stat_Changes(Consequences):
+	"""A type of Consequence that results from an Action that causes Stat Changes"""
 	def __init__(self, acting_pokemon, target_pokemon, stat, change):
 		Consequences.__init__(self, "stat_change", acting_pokemon, target_pokemon)
 		self.stat = stat
@@ -285,6 +296,7 @@ class Stat_Changes(Consequences):
 
 
 class Switch(Action):
+	"""A type of Action where the player switches out his/her pokemon"""
 	def __init__(self, battle, turn, player, withdraw_poke, send_poke):
 		Action.__init__(self, battle, turn, player, "switch")
 		self.order = Action.order
@@ -296,33 +308,4 @@ class Switch(Action):
 		return  "\nPlayer: " + self.player.name + "\nWithdrew: " + self.withdraw_poke.name + "\nSent: " + self.send_poke.name
 
 
-class Player:
-	"""The Player"""
-	def __init__(self, name, number):
-		self.name = name
-		self.number = number
-		self.team = []
-		self.win = False
-		self.actions = [] #list of action objects 
 
-	def has_won(self):
-		"""Checks to see if player has won"""
-		if won:
-			self.win = true
-
-	def add_action(self, action):
-		self.actions.append(action)
-
-	def __str__(self):
-		return self.name
-
-
-
-# can organize by player, by turn, by pokemon 
-# what would someone want to know after a game
-# which pokemon did the most damage in general
-# which pokemon finished off the most other pokemon
-# which pokemon had the most gameplay/ lasted the most turns
-# which pokemon each pokemon defeated and the pokemon it had lost to
-# most used move
-# most effective 

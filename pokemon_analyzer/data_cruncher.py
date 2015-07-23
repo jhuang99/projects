@@ -6,13 +6,13 @@ from matplotlib import pyplot as plt
 import matplotlib.patches as mpatches
 
 
+
 def import_file(filename):
 	battle = log_analyzer.read_body(filename)
 	while True:
-		command = input('Command: ')
+		command = input('Command: (type help to see all possible commands) ')
 		if command == "help":
-			print("All Commands\nprint all actions\nprint p1 actions\nprint p2 actions\nprint pokemon actions\nall damage\npokemon in play\nturn actions\nexit")
-		
+			print("All Commands\nprint all actions: Print's all the actions taken in a battle\nprint p1 actions: Print's all of player 1's actions taken in a battle\nprint p2 actions: Print's all of player 2's actions taken in a battle\nprint pokemon actions: Print's all of a pokemon's actions taken in a battle\nall damage: Shows all the damage dealt by each pokemon\npokemon in play: Plots how many pokemon each player has at each turn\nturn actions: Prints the actions of a turn\nplot in battle: Plots how many turns a pokemon is in a battle\nexit")
 		elif command == "print all actions":
 			print_all_actions(battle)
 		elif command == "print p1 actions" or command == "print p2 actions":
@@ -204,7 +204,8 @@ def plot_in_play(battle):
 	plt.show()
 
 
+
 if __name__ == "__main__":
-	# filename = input('filename: ')
-	# import_file(filename)
-	import_file("Battle 5.txt")
+	filename = input('Filename: ')
+	import_file(filename)
+
